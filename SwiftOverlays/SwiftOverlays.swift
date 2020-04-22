@@ -257,7 +257,7 @@ open class SwiftOverlays: NSObject {
         Removes all *blocking* overlays from application's main window
     */
     open class func removeAllBlockingOverlays() {
-        let window = UIApplication.shared.delegate!.window!!
+        let window = self.getWindow()
         removeAllOverlaysFromView(window)
     }
     
@@ -495,8 +495,21 @@ open class SwiftOverlays: NSObject {
         return label
     }
     
+    fileprivate class func getWindow() -> UIWindow {
+        // iOS13 or later
+        if #available(iOS 13.0, *) {
+            let sceneDelegate = UIApplication.shared.connectedScenes
+                .first!.delegate as! SceneDelegate
+            return sceneDelegate.window!!
+        // iOS12 or earlier
+        } else {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            return appDelegate.window!!
+        }
+    }
+    
     fileprivate class func addMainWindowBlocker() -> UIView {
-        let window = UIApplication.shared.delegate!.window!!
+        let window = self.getWindow()
         
         let blocker = UIView(frame: window.bounds)
         blocker.backgroundColor = backgroundColor
